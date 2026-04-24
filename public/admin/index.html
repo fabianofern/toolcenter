@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolCenter | Gestão Administrativa</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <button id="open-sidebar-btn" class="mobile-only"><i class="fa-solid fa-bars"></i></button>
+        <span class="mobile-logo">ToolCenter Admin</span>
+    </header>
+
+    <div class="admin-layout">
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <img src="/imagens/logo.png" alt="TC Logo" class="admin-logo">
+                    <span>ToolCenter</span>
+                </div>
+                <button id="close-sidebar-btn" class="mobile-only"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <nav class="admin-nav">
+                <div class="nav-section">GESTÃO DE ACESSO</div>
+                <a href="#users" class="nav-link active" data-tab="users">
+                    <i class="fa-solid fa-users"></i> Usuários
+                </a>
+                <a href="#tools" class="nav-link" data-tab="tools">
+                    <i class="fa-solid fa-toolbox"></i> Ferramentas
+                </a>
+                
+                <div class="nav-section">SEGURANÇA</div>
+                <a href="#audit" class="nav-link" data-tab="audit">
+                    <i class="fa-solid fa-shield-halved"></i> Auditoria
+                </a>
+
+                <div class="nav-section">SISTEMA</div>
+                <a href="/dashboard" class="nav-link">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao Portal
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="admin-profile">
+                    <span id="user-name-display" class="name">Admin</span>
+                    <span class="role">Administrador Geral</span>
+                </div>
+                <button id="logout-btn" class="btn-logout"><i class="fa-solid fa-power-off"></i> Sair</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-wrapper">
+            
+            <header class="admin-header">
+                <h1 id="current-tab-name">> Usuários</h1>
+                <div class="header-actions">
+                    <div id="global-status" class="status-indicator">
+                        <span class="dot green"></span> Sistema Online
+                    </div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                
+                <!-- TAB: USUÁRIOS -->
+                <section id="tab-users" class="tab-content">
+                    <div class="section-header">
+                        <h2>Lista de Usuários</h2>
+                        <button class="btn-premium" onclick="window.usersModule.openCreateModal()">
+                            <i class="fa-solid fa-plus"></i> NOVO USUÁRIO
+                        </button>
+                    </div>
+
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="user-search-input" placeholder="Buscar por nome ou e-mail..." onkeyup="window.usersModule.loadUsers()">
+                        </div>
+                        <!-- Outros filtros se necessário -->
+                    </div>
+
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Perfil Portal</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- Conteúdo via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: FERRAMENTAS -->
+                <section id="tab-tools" class="tab-content" style="display:none;">
+                    <div class="section-header">
+                        <h2>Catálogo de Ferramentas</h2>
+                        <button class="btn-premium" onclick="window.toolsModule.openCreateModal()">
+                            <i class="fa-solid fa-plus"></i> NOVA FERRAMENTA
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Slug</th>
+                                    <th>Categoria</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tools-table-body">
+                                <!-- Conteúdo via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: AUDITORIA -->
+                <section id="tab-audit" class="tab-content" style="display:none;">
+                    <div class="section-header">
+                        <h2>Rastreabilidade de Eventos</h2>
+                        <button class="btn-premium secondary" onclick="window.auditModule.exportCsv()">
+                            <i class="fa-solid fa-file-csv"></i> EXPORTAR CSV
+                        </button>
+                    </div>
+
+                    <div class="filter-bar">
+                        <select id="audit-event-filter">
+                            <option value="">Todos os eventos</option>
+                            <option value="LOGIN_SUCCESS">Sucesso de Login</option>
+                            <option value="LOGIN_FAILURE">Falha de Login</option>
+                            <option value="TOOL_ACCESS">Acesso a Ferramenta</option>
+                            <option value="PASSWORD_CHANGE">Troca de Senha</option>
+                            <option value="USER_CREATED">Criação de Usuário</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Usuário</th>
+                                    <th>Evento</th>
+                                    <th>Ferramenta</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-table-body">
+                                <!-- Conteúdo via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+
+            <div id="global-loader" class="loader-container">
+                <div class="spinner"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: USUÁRIO -->
+    <div id="modal-user" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-user-title">Novo Usuário</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-user">
+                    <input type="hidden" id="user-id">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="user-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail Corporativo</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Perfil no Portal</label>
+                        <select id="user-portal-role" required></select>
+                    </div>
+                    <div id="password-warning" class="form-info" style="display:none;">
+                        * Deixe o e-mail em branco para manter o atual. A senha inicial será '1234' (exige troca no primeiro login).
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-premium secondary close-modal">Cancelar</button>
+                <button class="btn-premium" onclick="window.usersModule.saveUser()">Salvar Usuário</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GESTÃO DE ACESSO (VÍNCULOS) -->
+    <div id="modal-access" class="modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Gerenciar Acessos: <span id="access-user-name"></span></h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="grant-access-box">
+                    <h4>Conceder Novo Acesso</h4>
+                    <div class="grant-form">
+                        <select id="grant-tool-select"></select>
+                        <select id="grant-role-select"></select>
+                        <button class="btn-premium" onclick="window.usersModule.grantAccess()">CONCEDER</button>
+                    </div>
+                </div>
+
+                <div id="user-access-list" class="access-list">
+                    <!-- Cards de acesso via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: FERRAMENTA -->
+    <div id="modal-tool" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-tool-title">Nova Ferramenta</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-tool">
+                    <input type="hidden" id="tool-id">
+                    <div class="form-group">
+                        <label>Nome da Ferramenta</label>
+                        <input type="text" id="tool-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Slug (Identificador Único)</label>
+                        <input type="text" id="tool-slug" required>
+                        <p id="tool-slug-warning" class="form-info" style="color:red; display:none;">Cuidado: alterar o slug pode quebrar integrações existentes.</p>
+                    </div>
+                    <div class="form-group">
+                        <label>URL de Acesso</label>
+                        <input type="url" id="tool-url" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <input type="text" id="tool-category" placeholder="Ex: Financeiro, TI...">
+                    </div>
+                    <div class="form-group">
+                        <label>Ícone (Opcional)</label>
+                        <input type="file" id="tool-icon-file" accept="image/*">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-premium secondary close-modal">Cancelar</button>
+                <button class="btn-premium" onclick="window.toolsModule.saveTool()">Salvar Ferramenta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/users.js"></script>
+    <script src="js/tools.js"></script>
+    <script src="js/audit.js"></script>
+</body>
+</html>
