@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolCenter | Login Corporativo</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="split-screen">
+        <!-- Coluna Esquerda: Formulário -->
+        <div class="left-col">
+            <div class="auth-wrapper">
+                <div class="auth-logo-mobile">
+                    <img src="imagens/tool center logo.png" alt="ToolCenter Logo" style="width: 100%;">
+                </div>
+                
+                <div class="auth-header">
+                    <h1>Bem-vindo ao ToolCenter</h1>
+                    <p>Entre com suas credenciais corporativas</p>
+                </div>
+
+                <!-- Formulário Base Login -->
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required placeholder="admin@empresa.com">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Senha</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" required placeholder="Sua senha">
+                            <button type="button" class="eye-btn" onclick="togglePassword('password')">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="eye-svg"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                        </div>
+                        <div class="password-hint">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Sua senha corporativa fornecida.
+                        </div>
+                    </div>
+
+                    <div class="form-actions-inline">
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="remember" id="remember">
+                            <span class="checkmark"></span>
+                            Lembrar-me
+                        </label>
+                        <a href="#" class="forgot-link">Esqueci a senha</a>
+                    </div>
+
+                    <button type="submit" id="login-submit-btn" class="btn-primary">Entrar</button>
+                </form>
+
+                <!-- Formulário Change Password Oculto -->
+                <form id="change-password-form" class="hidden">
+                    <div class="alert alert-warning">
+                        Sua conta exige a definição de uma nova senha pessoal definitiva.
+                    </div>
+                    
+                    <!-- Preenchido pela transição JS -->
+                    <input type="hidden" id="reset-user-id" name="userId"> 
+
+                    <div class="input-group">
+                        <label for="current-password">Senha Atual</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="current-password" name="currentPassword" required placeholder="Ex: 1234">
+                            <button type="button" class="eye-btn" onclick="togglePassword('current-password')">
+                                <!-- Eye icon inline handled by css / js toggle -->
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="eye-svg"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="new-password">Nova Senha</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="new-password" name="newPassword" required placeholder="Defina sua nova senha">
+                            <button type="button" class="eye-btn" onclick="togglePassword('new-password')">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="eye-svg"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                        </div>
+                        
+                        <div class="strength-bar-container">
+                            <div id="strength-bar-fill" class="strength-bar-fill bar-red"></div>
+                        </div>
+
+                        <ul class="password-requirements">
+                            <li id="req-length" class="requirement-item requirement-pending">
+                                <span class="icon">○</span> Mínimo de 8 caracteres
+                            </li>
+                            <li id="req-upper" class="requirement-item requirement-pending">
+                                <span class="icon">○</span> Pelo menos 1 letra maiúscula
+                            </li>
+                            <li id="req-num" class="requirement-item requirement-pending">
+                                <span class="icon">○</span> Pelo menos 1 número
+                            </li>
+                            <li id="req-spec" class="requirement-item requirement-pending">
+                                <span class="icon">○</span> 1 caractere especial (@#$%&*!-_+=)
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="confirm-password">Confirmação da Senha</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="confirm-password" name="confirmPassword" required placeholder="Repita a senha">
+                            <button type="button" class="eye-btn" onclick="togglePassword('confirm-password')">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="eye-svg"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                        </div>
+                        <p id="confirm-message" class="password-hint"></p>
+                    </div>
+
+                    <button type="submit" id="change-submit-btn" class="btn-primary" disabled>Alterar senha e entrar</button>
+                    <a href="#" class="forgot-link text-center mt-4 block" onclick="return switchToLogin(event)">Voltar ao login</a>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Coluna Direita: Imagem de Marca -->
+        <div class="right-col brand-col">
+            <div class="brand-wrapper">
+                <img src="imagens/escritorio.png" alt="Corporate System Illustration" class="brand-illustration">
+                <div class="brand-text">
+                    <h2>Solução Integrada de Acesso</h2>
+                    <p>O ToolCenter unifica de modo seguro todo acesso corporativo fragmentado em um só ambiente coeso e produtor.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts da Camada de Visual + Validação UI -->
+    <script src="/js/app.js?v=2"></script>
+</body>
+</html>

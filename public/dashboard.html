@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolCenter | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dashboard-integrated.css">
+</head>
+<body class="dashboard-body">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="imagens/logo.png" alt="TC Logo" class="sidebar-logo">
+            <span class="logo-text">ToolCenter</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" onclick="showSection('tools')">
+                <i class="fa-solid fa-shapes"></i>
+                <span>Minhas Ferramentas</span>
+            </a>
+            
+            <div id="admin-menu" class="hidden">
+                <div class="nav-label">GESTÃO</div>
+                <a href="/admin/index.html" class="nav-item">
+                    <i class="fa-solid fa-gauge"></i>
+                    <span>Painel Admin</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('audit')">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Auditoria</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="user-initials">--</div>
+                <div class="user-info">
+                    <span id="user-name" class="name">Carregando...</span>
+                    <span id="user-role" class="role">Percebendo...</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Sair
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- Header -->
+        <header class="content-header">
+            <div class="welcome-msg">
+                <h1>Painel de Controle</h1>
+                <p>Acesse suas aplicações integradas com SSO.</p>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Alternar Tema">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <div class="date-display" id="current-date">-- de --</div>
+            </div>
+        </header>
+
+        <!-- Tools Grid Section -->
+        <section id="section-tools" class="content-section">
+            <div class="section-header">
+                <h2>Ferramentas Disponíveis</h2>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Filtrar ferramentas..." id="tool-search" onkeyup="filterTools()">
+                </div>
+            </div>
+
+            <div class="tools-grid" id="tools-container">
+                <!-- Skeleton Loading -->
+                <div class="tool-card skeleton"></div>
+                <div class="tool-card skeleton"></div>
+                <div class="tool-card skeleton"></div>
+            </div>
+        </section>
+
+        <!-- Audit Section (Integrated into same SPA flow) -->
+        <section id="section-audit" class="content-section hidden">
+            <div class="section-header">
+                <h2>Logs de Auditoria</h2>
+                <div class="audit-filters">
+                    <button class="btn-secondary" onclick="exportAuditCSV()">
+                        <i class="fa-solid fa-file-csv"></i> EXPORTAR
+                    </button>
+                </div>
+            </div>
+            <div class="audit-table-container">
+                <table id="audit-table">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Usuário</th>
+                            <th>Evento</th>
+                            <th>Ferramenta</th>
+                            <th>IP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="audit-tbody">
+                        <!-- Conteúdo dinâmico -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal para Troca de Senha / Detalhes (Se necessário) -->
+    <div id="modal-backdrop" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Configurações do Usuário</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="profile-form">
+                <!-- Campos de alteração de senha se Admin liberar -->
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" id="modal-email" disabled>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-primary" onclick="requestPasswordReset()">
+                        <i class="fa-solid fa-key"></i> RESETAR SENHA
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/axios.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard-integrated.js"></script>
+</body>
+</html>
