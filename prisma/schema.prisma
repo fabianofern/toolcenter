@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PortalRole {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  users       User[]
+
+  @@map("portal_roles")
+}
+
+model ToolRole {
+  id              String            @id @default(uuid())
+  name            String            @unique
+  description     String?
+  userToolAccesses UserToolAccess[]
+
+  @@map("tool_roles")
+}
+
+model User {
+  id                   String            @id @default(uuid())
+  name                 String            @db.VarChar(150)
+  email                String            @unique @db.VarChar(150)
+  password_hash        String            @db.VarChar(255)
+  portal_role_id       String
+  status               UserStatus        @default(ACTIVE)
+  must_change_password Boolean           @default(true)
+  created_at           DateTime          @default(now())
+  updated_at           DateTime          @updatedAt
+
+  portal_role          PortalRole        @relation(fields: [portal_role_id], references: [id])
+  userToolAccesses     UserToolAccess[]
+  auditLogs            AuditLog[]
+
+  @@map("users")
+  @@index([email])
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Tool {
+  id               String            @id @default(uuid())
+  slug             String            @unique @db.VarChar(50)
+  name             String            @db.VarChar(100)
+  url              String            @db.VarChar(255)
+  icon             String?           @db.VarChar(50)
+  category         String?           @db.VarChar(50)
+  status           ToolStatus        @default(ACTIVE)
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @updatedAt
+
+  userToolAccesses UserToolAccess[]
+  auditLogs        AuditLog[]
+
+  @@map("tools")
+}
+
+enum ToolStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model UserToolAccess {
+  user_id      String
+  tool_id      String
+  tool_role_id String
+  created_at   DateTime @default(now())
+
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tool         Tool     @relation(fields: [tool_id], references: [id], onDelete: Cascade)
+  toolRole     ToolRole @relation(fields: [tool_role_id], references: [id])
+
+  @@id([user_id, tool_id])
+  @@index([user_id])
+  @@map("user_tool_access")
+}
+
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  user_id    String?
+  event_type String   @db.VarChar(50)
+  tool_id    String?
+  ip_address String?
+  user_agent String?
+  created_at DateTime @default(now())
+
+  user       User?    @relation(fields: [user_id], references: [id])
+  tool       Tool?    @relation(fields: [tool_id], references: [id])
+
+  @@index([created_at])
+  @@index([user_id, event_type])
+  @@map("audit_logs")
+}
+
+model TokenBlacklist {
+  jti        String   @id @db.VarChar(255)
+  exp        DateTime
+  created_at DateTime @default(now())
+
+  @@map("token_blacklist")
+}
